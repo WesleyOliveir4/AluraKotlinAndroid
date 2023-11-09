@@ -2,6 +2,7 @@ package br.com.alura.ceep.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.appcompat.app.AppCompatActivity
@@ -11,8 +12,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import br.com.alura.ceep.database.AppDatabase
 import br.com.alura.ceep.databinding.ActivityListaNotasBinding
 import br.com.alura.ceep.extensions.vaiPara
+import br.com.alura.ceep.model.Nota
 import br.com.alura.ceep.ui.recyclerview.adapter.ListaNotasAdapter
+import br.com.alura.ceep.webclient.RetrofitInicializador
 import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Response
 
 class ListaNotasActivity : AppCompatActivity() {
 
@@ -35,6 +40,11 @@ class ListaNotasActivity : AppCompatActivity() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 buscaNotas()
             }
+        }
+        var call: Call<List<Nota>> = RetrofitInicializador().notasService.buscaTodas()
+        val resposta: Response<List<Nota>> = call.execute()
+        resposta.body()?.let { notas ->
+            Log.i("Lista de Notas "," Notas $notas")
         }
     }
 
