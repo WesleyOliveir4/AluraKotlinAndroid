@@ -15,6 +15,7 @@ import br.com.alura.ceep.extensions.vaiPara
 import br.com.alura.ceep.model.Nota
 import br.com.alura.ceep.ui.recyclerview.adapter.ListaNotasAdapter
 import br.com.alura.ceep.webclient.RetrofitInicializador
+import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Response
@@ -41,11 +42,14 @@ class ListaNotasActivity : AppCompatActivity() {
                 buscaNotas()
             }
         }
-        var call: Call<List<Nota>> = RetrofitInicializador().notasService.buscaTodas()
-        val resposta: Response<List<Nota>> = call.execute()
-        resposta.body()?.let { notas ->
-            Log.i("Lista de Notas "," Notas $notas")
+        lifecycleScope.launch(IO){
+            var call: Call<List<Nota>> = RetrofitInicializador().notasService.buscaTodas()
+            val resposta: Response<List<Nota>> = call.execute()
+            resposta.body()?.let { notas ->
+                Log.i("Lista de Notas "," Notas $notas")
+            }
         }
+
     }
 
     private fun configuraFab() {
