@@ -15,10 +15,12 @@ import br.com.alura.ceep.extensions.vaiPara
 import br.com.alura.ceep.model.Nota
 import br.com.alura.ceep.model.NotaResposta
 import br.com.alura.ceep.ui.recyclerview.adapter.ListaNotasAdapter
+import br.com.alura.ceep.webclient.NotaWebClient
 import br.com.alura.ceep.webclient.RetrofitInicializador
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import retrofit2.Call
+import retrofit2.Callback
 import retrofit2.Response
 
 class ListaNotasActivity : AppCompatActivity() {
@@ -32,6 +34,9 @@ class ListaNotasActivity : AppCompatActivity() {
     private val dao by lazy {
         AppDatabase.instancia(this).notaDao()
     }
+    private val webClient by lazy {
+        NotaWebClient()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,16 +48,33 @@ class ListaNotasActivity : AppCompatActivity() {
                 buscaNotas()
             }
         }
-        lifecycleScope.launch(IO){
-            var call: Call<List<NotaResposta>> = RetrofitInicializador().notasService.buscaTodas()
-            val resposta: Response<List<NotaResposta>> = call.execute()
-            resposta.body()?.let { notasResposta ->
-                val notas:List<Nota> = notasResposta.map {
-                    it.nota
-                }
-                Log.i("Lista de Notas "," Notas $notas")
-            }
+        lifecycleScope.launch {
+            val notas = webClient.buscaTodas()
         }
+
+//        lifecycleScope.launch(IO){
+//            val call: Call<List<NotaResposta>> = RetrofitInicializador().notasService.buscaTodasCoroutines
+//            call.enqueue(object : Callback<List<NotaResposta>?>{
+//
+//                override fun onResponse(
+//                    call: Call<List<NotaResposta>?>,
+//                    resposta: Response<List<NotaResposta>?>
+//                ) {
+//                    resposta.body()?.let { notasResposta ->
+//                        val notas:List<Nota> = notasResposta.map {
+//                            it.nota
+//                        }
+//                        Log.i("Lista de Notas "," Notas $notas")
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<List<NotaResposta>?>, t: Throwable) {
+//                    TODO("Not yet implemented")
+//                }
+//
+//            })
+//        }
+
 
     }
 
