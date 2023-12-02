@@ -14,6 +14,7 @@ import br.com.alura.ceep.databinding.ActivityListaNotasBinding
 import br.com.alura.ceep.extensions.vaiPara
 import br.com.alura.ceep.model.Nota
 import br.com.alura.ceep.model.NotaResposta
+import br.com.alura.ceep.repository.NotaRepository
 import br.com.alura.ceep.ui.recyclerview.adapter.ListaNotasAdapter
 import br.com.alura.ceep.webclient.NotaWebClient
 import br.com.alura.ceep.webclient.RetrofitInicializador
@@ -31,11 +32,11 @@ class ListaNotasActivity : AppCompatActivity() {
     private val adapter by lazy {
         ListaNotasAdapter(this)
     }
-    private val dao by lazy {
-        AppDatabase.instancia(this).notaDao()
-    }
-    private val webClient by lazy {
-        NotaWebClient()
+    private val repository by lazy {
+        NotaRepository(
+            AppDatabase.instancia(this).notaDao(),
+            NotaWebClient()
+        )
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +45,9 @@ class ListaNotasActivity : AppCompatActivity() {
         configuraFab()
         configuraRecyclerView()
         lifecycleScope.launch {
+            launch {
+                repository.atualizaTodas()
+            }
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 buscaNotas()
             }
@@ -96,7 +100,7 @@ class ListaNotasActivity : AppCompatActivity() {
     }
 
     private suspend fun buscaNotas() {
-        dao.buscaTodas()
+        repository.buscaTodas()
             .collect { notasEncontradas ->
                 binding.activityListaNotasMensagemSemNotas.visibility =
                     if (notasEncontradas.isEmpty()) {
