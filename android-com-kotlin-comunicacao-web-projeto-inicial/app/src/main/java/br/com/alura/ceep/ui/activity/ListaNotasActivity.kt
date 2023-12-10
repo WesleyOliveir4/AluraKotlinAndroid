@@ -52,9 +52,9 @@ class ListaNotasActivity : AppCompatActivity() {
                 buscaNotas()
             }
         }
-        lifecycleScope.launch {
-            val notas = webClient.buscaTodas()
-        }
+//        lifecycleScope.launch {
+//            val notas = webClient.buscaTodas()
+//        }
 
 //        lifecycleScope.launch(IO){
 //            val call: Call<List<NotaResposta>> = RetrofitInicializador().notasService.buscaTodasCoroutines

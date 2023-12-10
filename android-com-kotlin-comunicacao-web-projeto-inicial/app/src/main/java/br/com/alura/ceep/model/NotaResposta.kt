@@ -1,5 +1,7 @@
 package br.com.alura.ceep.model
 
+import java.util.UUID
+
 class NotaResposta(
         val id: String?,
         val titulo: String?,
@@ -8,7 +10,7 @@ class NotaResposta(
 ) {
 
         val nota: Nota get() = Nota(
-                id = 0,
+                id = id ?: UUID.randomUUID().toString(),
                 titulo = titulo?: "",
                 descricao = descricao?: "",
                 imagem = imagem?: ""
